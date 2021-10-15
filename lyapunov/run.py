@@ -34,7 +34,7 @@ process = psutil.Process(os.getpid())
 
 def parse_params():
     parser = argparse.ArgumentParser(description='GANs in PyTorch')
-    parser.add_argument('-dom','--domain', type=str, default='MO8G', help='domain to run', required=False)
+    parser.add_argument('-dom','--domain', type=str, default='MNIST2', help='domain to run', required=False)
     parser.add_argument('-desc','--description', type=str, default='', help='description for the experiment', required=False)
     parser.add_argument('-bs','--batch_size', type=int, default=512, help='batch_size for training', required=False)
     parser.add_argument('-div','--divergence', type=str, default='JS', help='divergence measure, i.e. V, for training', required=False)
@@ -150,11 +150,11 @@ def parse_params():
         os.makedirs(saveto)
         os.makedirs(saveto+'/samples')
         os.makedirs(saveto+'/weights')
-    shutil.copy(os.path.realpath('lyapunov/run.py'), os.path.join(saveto, 'run.py'))
-    shutil.copy(os.path.realpath('lyapunov/core.py'), os.path.join(saveto, 'core.py'))
+    shutil.copy(os.path.realpath('run.py'), os.path.join(saveto, 'run.py'))
+    shutil.copy(os.path.realpath('core.py'), os.path.join(saveto, 'core.py'))
     for mp in args['map_strings']:
         train_file = mp+'.py'
-        shutil.copy(os.path.realpath('lyapunov/train_ops/'+train_file), os.path.join(saveto, train_file))
+        shutil.copy(os.path.realpath('train_ops/'+train_file), os.path.join(saveto, train_file))
     with open(saveto+'args.txt', 'w') as file:
         for key, val in args.items():
             file.write('--'+str(key)+' '+str(val)+'\n')

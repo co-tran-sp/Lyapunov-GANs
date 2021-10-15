@@ -225,6 +225,7 @@ class Train(object):
             self.aux_g = None
 
         self.K = self.m.params['K']
+        # Number of lyapunov exponents to compute
 
         d_shapes = [list(p.shape) for p in self.m.D.parameters()]
         d_dims = [np.prod(sh) for sh in d_shapes]
@@ -237,7 +238,7 @@ class Train(object):
 
         print('NOTE: Discriminator dimensionality = {:d}.'.format(sum(d_dims)))
         print('NOTE: Generator dimensionality = {:d}.'.format(sum(g_dims)))
-
+        
         Ks = range(self.K)
         self.psi_d = [[self.m.to_gpu_alt(torch.tensor(psi_split[i][:,k].reshape(*d_shapes[i]).astype('float32'), requires_grad=False)) for i in range(len(d_dims))] for k in Ks]
         self.psi_g = [[self.m.to_gpu_alt(torch.tensor(psi_split[i+len(d_dims)][:,k].reshape(*g_shapes[i]).astype('float32'), requires_grad=False)) for i in range(len(g_dims))] for k in Ks]
