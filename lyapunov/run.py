@@ -34,7 +34,7 @@ process = psutil.Process(os.getpid())
 
 def parse_params():
     parser = argparse.ArgumentParser(description='GANs in PyTorch')
-    parser.add_argument('-dom','--domain', type=str, default='MNIST2', help='domain to run', required=False)
+    parser.add_argument('-dom','--domain', type=str, default='MNIST', help='domain to run', required=False)
     parser.add_argument('-desc','--description', type=str, default='', help='description for the experiment', required=False)
     parser.add_argument('-bs','--batch_size', type=int, default=512, help='batch_size for training', required=False)
     parser.add_argument('-div','--divergence', type=str, default='JS', help='divergence measure, i.e. V, for training', required=False)
@@ -85,33 +85,34 @@ def parse_params():
     if args['start_lam_it'] < 0.:
         args['start_lam_it'] = int(0.9*args['max_iter'])
     args['weights_every'] = int(np.clip(args['weights_every'], 1, max(args['max_iter']//2,1)))
-
+    
+    
     if args['domain'] == 'MO8G':
-        from examples.domains.synthetic import MOG_Circle as Domain
-        from examples.domains.synthetic import Generator, Discriminator
+        from example.domains.synthetic import MOG_Circle as Domain
+        from example.domains.synthetic import Generator, Discriminator
     elif args['domain'] == 'MO25G':
-        from examples.domains.synthetic import MOG_Grid as Domain
-        from examples.domains.synthetic import Generator, Discriminator
+        from example.domains.synthetic import MOG_Grid as Domain
+        from example.domains.synthetic import Generator, Discriminator
     elif args['domain'] == 'SwissRoll':
-        from examples.domains.synthetic import SwissRoll as Domain
-        from examples.domains.synthetic import Generator, Discriminator
+        from example.domains.synthetic import SwissRoll as Domain
+        from example.domains.synthetic import Generator, Discriminator
     elif 'Gaussian' in args['domain']:
-        from examples.domains.synthetic import Gaussian as Domain
+        from example.domains.synthetic import Gaussian as Domain
         if args['domain'][:2] == 'CL':
-            from examples.domains.synthetic import Generator_C as Generator
-            from examples.domains.synthetic import Discriminator_L as Discriminator
+            from example.domains.synthetic import Generator_C as Generator
+            from example.domains.synthetic import Discriminator_L as Discriminator
         elif args['domain'][:2] == 'LQ':
-            from examples.domains.synthetic import Generator_L as Generator
-            from examples.domains.synthetic import Discriminator_Q as Discriminator
+            from example.domains.synthetic import Generator_L as Generator
+            from example.domains.synthetic import Discriminator_Q as Discriminator
     elif args['domain'] == 'MNIST':
-        from examples.domains.mnist import MNIST as Domain
-        from examples.domains.mnist import Generator, Discriminator
+        from example.domains.mnist import MNIST as Domain
+        from example.domains.mnist import Generator, Discriminator
     elif args['domain'] == 'MNIST2':
-        from examples.domains.mnist2 import MNIST as Domain
-        from examples.domains.mnist2 import Generator, Discriminator
+        from example.domains.mnist2 import MNIST as Domain
+        from example.domains.mnist2 import Generator, Discriminator
     elif args['domain'] == 'CIFAR10':
-        from examples.domains.cifar10 import CIFAR10 as Domain
-        from examples.domains.cifar10 import Generator, Discriminator
+        from example.domains.cifar10 import CIFAR10 as Domain
+        from example.domains.cifar10 import Generator, Discriminator
     else:
         raise NotImplementedError(args['domain'])
 
@@ -139,6 +140,7 @@ def parse_params():
 
     if args['saveto'] == '':
         args['saveto'] = 'examples/results/' + args['domain'] + '/' + '-'.join(args['map_strings']) + '/'*(args['description']!='') + args['description']
+        args['domain_dir'] = 'examples/domains/'+ str(args['domain']).lower()
 
     if args['description'] == '':
         args['description'] = args['domain'] + '-' + '-'.join(args['map_strings'])
@@ -148,6 +150,7 @@ def parse_params():
     saveto = args['saveto'] + '/' + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S/{}').format('')
     if not os.path.exists(saveto):
         os.makedirs(saveto)
+        os.makedirs(args['domain_dir'])
         os.makedirs(saveto+'/samples')
         os.makedirs(saveto+'/weights')
     shutil.copy(os.path.realpath('run.py'), os.path.join(saveto, 'run.py'))
