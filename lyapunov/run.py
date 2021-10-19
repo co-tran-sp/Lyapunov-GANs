@@ -166,6 +166,7 @@ def parse_params():
     cuda_available = torch.cuda.is_available()
     if args['gpu'] >= -1 and cuda_available:
         torch.cuda.device(args['gpu'])
+        print('Using gpu')
         args['description'] += ' (gpu'+str(args['gpu'])+'/'+str(args['gpu_alt'])+')'
     else:
         args['description'] += ' (cpu)'
